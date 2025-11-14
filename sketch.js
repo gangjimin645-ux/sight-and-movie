@@ -21,7 +21,7 @@ const ORIGINAL_WIDTH = 1920;
 const ORIGINAL_HEIGHT = 1080;
 const ORIGINAL_BALL_RADIUS = 70;
 // ⭐ 공의 최소 크기 (35px 이하로 작아지지 않음)
-const MIN_BALL_RADIUS = 35; 
+const MIN_BALL_RADIUS = 20; 
 // ⭐ 커서 이미지의 기본 크기
 const BASE_CURSOR_SIZE = 60;
 
@@ -129,7 +129,7 @@ function recalculateSizes() {
 
 function draw() {
     // 공 생성기 (배열이 비워지면 자동으로 다시 생성 시작)
-    if (balls.length < 200 && frameCount % 5 === 0) {
+    if (balls.length < 100 && frameCount % 5 === 0) {
         let x = random(width);
         let y = random(-300, -50);
         balls.push(new Ball(x, y, currentBallRadius));
