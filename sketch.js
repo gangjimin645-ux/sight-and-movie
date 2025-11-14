@@ -3,13 +3,11 @@ let balls = [];
 let gravity = 0.6;
 let restitution = 0.4;
 let collisionIterations = 8;
-const BALL_RADIUS = 70;
 
 let stripedBallImage1;
 let stripedBallImage2;
 let eyesBallImage;
 let allBallImages = [];
-// (special.png 관련 변수 제거됨)
 
 // ⭐ 기본 커서 이미지 변수
 let defaultCursorImage; 
@@ -22,6 +20,8 @@ let currentActiveCursorImage;
 const ORIGINAL_WIDTH = 1920;
 const ORIGINAL_HEIGHT = 1080;
 const ORIGINAL_BALL_RADIUS = 70;
+// ⭐ 공의 최소 크기 (35px 이하로 작아지지 않음)
+const MIN_BALL_RADIUS = 35; 
 // ⭐ 커서 이미지의 기본 크기
 const BASE_CURSOR_SIZE = 60;
 
@@ -87,28 +87,28 @@ function resetSketch() {
 function recalculateSizes() {
     let ratio = width / ORIGINAL_WIDTH;
 
-    // 공, 커서 등 다른 요소들은 원래 비율대로 둡니다.
-    currentBallRadius = ORIGINAL_BALL_RADIUS * ratio;
+    // ⭐ 공의 최소 크기 적용: 비율로 계산한 값과 최소값(MIN_BALL_RADIUS) 중 큰 값을 사용합니다.
+    currentBallRadius = max(ORIGINAL_BALL_RADIUS * ratio, MIN_BALL_RADIUS);
     currentCursorSize = BASE_CURSOR_SIZE * ratio;
     
     // --- ⬇️ 글자 이미지를 위한 수정된 부분 (휴대폰 크기 보정) ⬇️ ---
 
-    // 1. 'sight.png'의 최소 너비를 300px로 설정 (이 값은 조절 가능)
+    // 1. 'sight.png'의 최소 너비 (300px로 설정)
     let minSightWidth = 300; 
     currentCenterObjectImageWidth = max(centerObjectImageWidth * ratio, minSightWidth);
     // 너비에 맞춰 높이 비율도 동일하게 조정
     let sightScaleRatio = currentCenterObjectImageWidth / centerObjectImageWidth;
     currentCenterObjectImageHeight = centerObjectImageHeight * sightScaleRatio;
 
-    // 2. 'seesunsohot.png'의 최소 너비를 180px로 설정 (이 값은 조절 가능)
+    // 2. 'seesunsohot.png'의 최소 너비 (180px로 설정)
     let minSecondImageWidth = 180;
     currentSecondImageWidth = max(secondImageWidth * ratio, minSecondImageWidth);
     // 너비에 맞춰 높이 비율도 동일하게 조정
     let secondScaleRatio = currentSecondImageWidth / secondImageWidth;
     currentSecondImageHeight = secondImageHeight * secondScaleRatio;
 
-    // 3. 이미지 사이 갭(GAP)의 최소값 설정 (예: 20px)
-    currentGapY = max(GAP_Y * ratio, 30);
+    // 3. 이미지 사이 갭(GAP)의 최소값 설정 (요청된 30px 반영)
+    currentGapY = max(GAP_Y * ratio, 20); // <--- 이 부분이 30으로 수정되었습니다.
 
     // --- ⬆️ 여기까지 수정 ⬆️ ---
 
@@ -121,7 +121,8 @@ function recalculateSizes() {
 
     // 기존 공들의 크기 업데이트
     for (let b of balls) {
-        b.r = currentBallRadius;
+        // 공 객체의 반지름도 업데이트된 currentBallRadius를 따릅니다.
+        b.r = currentBallRadius; 
     }
 }
 
@@ -220,16 +221,16 @@ function mouseClicked() {
 
 class Ball {
     constructor(x, y, r) {
+        // 공을 생성할 때 현재의 최소 크기(r)를 반영하여 생성합니다.
         this.x = x;
         this.y = y;
-        this.r = r;
+        this.r = r; 
         this.vx = random(-0.2, 0.2);
         this.vy = 0;
 
         this.angle = random(TWO_PI);
         this.angularVelocity = random(-0.01, 0.01);
 
-        // ⭐ 수정: specialImage 로직을 제거하고, allBallImages에서 무작위로 선택합니다.
         this.assignedImage = random(allBallImages);
 
         this.color = color(random(150, 255), random(120, 220), random(200, 255), 255);
