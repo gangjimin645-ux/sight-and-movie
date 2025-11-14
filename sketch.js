@@ -21,7 +21,7 @@ const ORIGINAL_WIDTH = 1920;
 const ORIGINAL_HEIGHT = 1080;
 const ORIGINAL_BALL_RADIUS = 70;
 // ⭐ 공의 최소 크기 (35px 이하로 작아지지 않음)
-const MIN_BALL_RADIUS = 20; 
+const MIN_BALL_RADIUS = 35; 
 // ⭐ 커서 이미지의 기본 크기
 const BASE_CURSOR_SIZE = 60;
 
@@ -94,14 +94,14 @@ function recalculateSizes() {
     // --- ⬇️ 글자 이미지를 위한 수정된 부분 (휴대폰 크기 보정) ⬇️ ---
 
     // 1. 'sight.png'의 최소 너비 (300px로 설정)
-    let minSightWidth = 250; 
+    let minSightWidth = 200; 
     currentCenterObjectImageWidth = max(centerObjectImageWidth * ratio, minSightWidth);
     // 너비에 맞춰 높이 비율도 동일하게 조정
     let sightScaleRatio = currentCenterObjectImageWidth / centerObjectImageWidth;
     currentCenterObjectImageHeight = centerObjectImageHeight * sightScaleRatio;
 
     // 2. 'seesunsohot.png'의 최소 너비 (180px로 설정)
-    let minSecondImageWidth = 130;
+    let minSecondImageWidth = 70;
     currentSecondImageWidth = max(secondImageWidth * ratio, minSecondImageWidth);
     // 너비에 맞춰 높이 비율도 동일하게 조정
     let secondScaleRatio = currentSecondImageWidth / secondImageWidth;
