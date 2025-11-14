@@ -9,7 +9,8 @@ let stripedBallImage1;
 let stripedBallImage2;
 let eyesBallImage;
 let allBallImages = [];
-// ⭐ specialImage 및 hasSpecialBallBeenAssigned 변수 제거됨
+let specialImage;
+let hasSpecialBallBeenAssigned = false;
 
 // ⭐ 기본 커서 이미지 변수
 let defaultCursorImage; 
@@ -50,7 +51,7 @@ function preload() {
     stripedBallImage1 = loadImage('iamge/striped_ball.png');
     stripedBallImage2 = loadImage('iamge/striped_ball2.png');
     eyesBallImage = loadImage('iamge/eyes.png');
-    // ⭐ specialImage 로드 코드 제거됨
+    specialImage = loadImage('iamge/special.png');
     
     // ⭐ 기본 커서 (cursor.png) 로드
     defaultCursorImage = loadImage('iamge/cursor.png'); 
@@ -81,7 +82,7 @@ function setup() {
 // ⭐ 추가: 스케치를 리셋하는 함수
 function resetSketch() {
     balls = []; // 모든 공 배열 비우기
-    // ⭐ hasSpecialBallBeenAssigned 플래그 초기화 코드 제거됨
+    hasSpecialBallBeenAssigned = false; // 특별한 공 플래그 초기화
 }
 
 
@@ -214,8 +215,14 @@ class Ball {
         this.angle = random(TWO_PI);
         this.angularVelocity = random(-0.01, 0.01);
 
-        // ⭐ 수정: specialImage 로직을 제거하고, allBallImages에서 무작위로 선택합니다.
-        this.assignedImage = random(allBallImages);
+        // specialImage를 단 한 번만 할당합니다.
+        if (!hasSpecialBallBeenAssigned) {
+            this.assignedImage = specialImage;
+            hasSpecialBallBeenAssigned = true; // 플래그를 true로 설정
+        } else {
+            // 이후 생성되는 공들은 allBallImages 중에서 랜덤으로 선택
+            this.assignedImage = random(allBallImages);
+        }
 
         this.color = color(random(150, 255), random(120, 220), random(200, 255), 255);
     }
