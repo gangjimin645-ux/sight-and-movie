@@ -240,3 +240,133 @@ class Ball {
                 this.vx = 0;
                 this.angularVelocity = 0;
             }
+        }
+
+        // 좌우 벽 충돌
+        if (this.x - this.r < 0) {
+            this.x = this.r;
+            this.vx *= -restitution;
+            this.angularVelocity *= 0.8;
+        } else if (this.x + this.r > width) {
+            this.x = width - this.r;
+            this.vx *= -restitution;
+            this.angularVelocity *= 0.8;
+        }
+
+        // 1. sight.png와의 충돌 처리
+        this.handleRectCollision(centerObjectX, centerObjectY, currentCenterObjectImageWidth, currentCenterObjectImageHeight);
+
+        // 2. seesunsohot.png와의 충돌 처리
+        let secondImageCenterX = centerObjectX;
+        let secondImageCenterY = centerObjectY + (currentCenterObjectImageHeight / 2) + currentGapY + (currentSecondImageHeight / 2);
+        this.handleRectCollision(secondImageCenterX, secondImageCenterY, currentSecondImageWidth, currentSecondImageHeight);
+    }
+
+    handleRectCollision(rectX, rectY, rectW, rectH) {
+        let halfW = rectW / 2;
+        let halfH = rectH / 2;
+
+        let closestX = constrain(this.x, rectX - halfW, rectX + halfW);
+        let closestY = constrain(this.y, rectY - halfH, rectY + halfH);
+
+        let dx = closestX - this.x;
+        let dy = closestY - this.y;
+        let dist = sqrt(dx * dx + dy * dy);
+
+        if (dist < this.r) {
+            let overlap = this.r - dist + 2.5;
+            let angle = atan2(dy, dx) + PI;
+
+            this.x += overlap * cos(angle);
+            this.y += overlap * sin(angle);
+
+            let nx = cos(angle);
+            let ny = sin(angle);
+            let tx = -ny;
+            let ty = nx;
+
+            let normalVelocity = this.vx * nx + this.vy * ny;
+            let tangentVelocityX = this.vx - normalVelocity * nx;
+            let tangentVelocityY = this.vy - normalVelocity * ny;
+
+            normalVelocity *= -restitution;
+
+            this.vx = normalVelocity * nx + tangentVelocityX;
+            this.vy = normalVelocity * ny + tangentVelocityY;
+
+            let relativeTangentVelocity = this.vx * tx + this.vy * ty;
+            let frictionFactor = 0.05;
+            let impulse = relativeTangentVelocity * frictionFactor;
+            this.angularVelocity -= impulse / (this.r * this.r) * 0.05;
+
+            this.vx -= impulse * tx;
+            this.vy -= impulse * ty;
+        }
+    }
+
+    collide(other) {
+        let dx = other.x - this.x;
+        let dy = other.y - this.y;
+        let dist = sqrt(dx * dx + dy * dy);
+        let minDist = this.r + other.r;
+
+        if (dist < minDist) {
+            let overlap = (minDist - dist + 0.05);
+            let angle = atan2(dy, dx);
+
+            let m1 = this.r * this.r;
+            let m2 = other.r * other.r;
+            let totalMass = m1 + m2;
+
+            let thisMoveRatio = m2 / totalMass;
+            let otherMoveRatio = m1 / totalMass;
+
+            this.x -= (overlap * thisMoveRatio) * cos(angle);
+            this.y -= (overlap * thisMoveRatio) * sin(angle);
+            other.x += (overlap * otherMoveRatio) * cos(angle);
+            other.y += (overlap * otherMoveRatio) * sin(angle);
+
+            let nx = cos(angle);
+            let ny = sin(angle);
+            let tx = -ny;
+            let ty = nx;
+
+            let v1n = this.vx * nx + this.vy * ny;
+            let v1t = this.vx * tx + this.vy * ty;
+            let v2n = other.vx * nx + other.vy * ny;
+            let v2t = other.vx * tx + other.vy * ty;
+
+            let v1n_after = (v1n * (m1 - m2) + 2 * m2 * v2n) / (m1 + m2) * restitution;
+            let v2n_after = (v2n * (m2 - m1) + 2 * m1 * v1n) / (m1 + m2) * restitution;
+
+            let frictionFactor = 0.05;
+            let relativeTangentVelocity = v1t - v2t;
+            let impulse = relativeTangentVelocity * frictionFactor;
+
+            this.angularVelocity -= impulse / (this.r * this.r) * 0.05;
+            other.angularVelocity += impulse / (other.r * other.r) * 0.05;
+
+            v1t -= impulse;
+            v2t += impulse;
+
+            this.vx = v1t * tx + v1n_after * nx;
+            this.vy = v1t * ty + v1n_after * ny;
+            other.vx = v2t * tx + v2n_after * nx;
+            other.vy = v2t * ty + v2n_after * ny;
+        }
+    }
+
+    display() {
+        if (this.assignedImage) {
+            push();
+            translate(this.x, this.y);
+            rotate(this.angle);
+            imageMode(CENTER);
+            image(this.assignedImage, 0, 0, this.r * 2, this.r * 2);
+            pop();
+        } else {
+            fill(this.color);
+            ellipse(this.x, this.y, this.r * 2);
+        }
+    }
+}
