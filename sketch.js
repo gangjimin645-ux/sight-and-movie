@@ -9,8 +9,7 @@ let stripedBallImage1;
 let stripedBallImage2;
 let eyesBallImage;
 let allBallImages = [];
-let specialImage;
-let hasSpecialBallBeenAssigned = false;
+// (special.png 관련 변수 제거됨)
 
 // ⭐ 기본 커서 이미지 변수
 let defaultCursorImage; 
@@ -51,7 +50,6 @@ function preload() {
     stripedBallImage1 = loadImage('iamge/striped_ball.png');
     stripedBallImage2 = loadImage('iamge/striped_ball2.png');
     eyesBallImage = loadImage('iamge/eyes.png');
-    specialImage = loadImage('iamge/special.png');
     
     // ⭐ 기본 커서 (cursor.png) 로드
     defaultCursorImage = loadImage('iamge/cursor.png'); 
@@ -82,7 +80,6 @@ function setup() {
 // ⭐ 추가: 스케치를 리셋하는 함수
 function resetSketch() {
     balls = []; // 모든 공 배열 비우기
-    hasSpecialBallBeenAssigned = false; // 특별한 공 플래그 초기화
 }
 
 
@@ -90,22 +87,39 @@ function resetSketch() {
 function recalculateSizes() {
     let ratio = width / ORIGINAL_WIDTH;
 
+    // 공, 커서 등 다른 요소들은 원래 비율대로 둡니다.
     currentBallRadius = ORIGINAL_BALL_RADIUS * ratio;
-    currentCenterObjectImageWidth = centerObjectImageWidth * ratio;
-    currentCenterObjectImageHeight = centerObjectImageHeight * ratio;
-    currentSecondImageWidth = secondImageWidth * ratio;
-    currentSecondImageHeight = secondImageHeight * ratio;
-    currentGapY = GAP_Y * ratio;
-    
-    // 커서 크기 계산
     currentCursorSize = BASE_CURSOR_SIZE * ratio;
+    
+    // --- ⬇️ 글자 이미지를 위한 수정된 부분 (휴대폰 크기 보정) ⬇️ ---
 
+    // 1. 'sight.png'의 최소 너비를 300px로 설정 (이 값은 조절 가능)
+    let minSightWidth = 300; 
+    currentCenterObjectImageWidth = max(centerObjectImageWidth * ratio, minSightWidth);
+    // 너비에 맞춰 높이 비율도 동일하게 조정
+    let sightScaleRatio = currentCenterObjectImageWidth / centerObjectImageWidth;
+    currentCenterObjectImageHeight = centerObjectImageHeight * sightScaleRatio;
+
+    // 2. 'seesunsohot.png'의 최소 너비를 180px로 설정 (이 값은 조절 가능)
+    let minSecondImageWidth = 180;
+    currentSecondImageWidth = max(secondImageWidth * ratio, minSecondImageWidth);
+    // 너비에 맞춰 높이 비율도 동일하게 조정
+    let secondScaleRatio = currentSecondImageWidth / secondImageWidth;
+    currentSecondImageHeight = secondImageHeight * secondScaleRatio;
+
+    // 3. 이미지 사이 갭(GAP)의 최소값 설정 (예: 20px)
+    currentGapY = max(GAP_Y * ratio, 20);
+
+    // --- ⬆️ 여기까지 수정 ⬆️ ---
+
+    // 수직 중앙 정렬 로직 (새로운 크기 적용)
     let totalContentHeight = currentCenterObjectImageHeight + currentGapY + currentSecondImageHeight;
     let topStartingY = (height / 2) - (totalContentHeight / 2);
 
     centerObjectY = topStartingY + (currentCenterObjectImageHeight / 2);
     centerObjectX = width / 2;
 
+    // 기존 공들의 크기 업데이트
     for (let b of balls) {
         b.r = currentBallRadius;
     }
@@ -215,14 +229,8 @@ class Ball {
         this.angle = random(TWO_PI);
         this.angularVelocity = random(-0.01, 0.01);
 
-        // specialImage를 단 한 번만 할당합니다.
-        if (!hasSpecialBallBeenAssigned) {
-            this.assignedImage = specialImage;
-            hasSpecialBallBeenAssigned = true; // 플래그를 true로 설정
-        } else {
-            // 이후 생성되는 공들은 allBallImages 중에서 랜덤으로 선택
-            this.assignedImage = random(allBallImages);
-        }
+        // ⭐ 수정: specialImage 로직을 제거하고, allBallImages에서 무작위로 선택합니다.
+        this.assignedImage = random(allBallImages);
 
         this.color = color(random(150, 255), random(120, 220), random(200, 255), 255);
     }
