@@ -21,7 +21,7 @@ const ORIGINAL_WIDTH = 1920;
 const ORIGINAL_HEIGHT = 1080;
 const ORIGINAL_BALL_RADIUS = 70;
 // ⭐ 공의 최소 크기 (35px 이하로 작아지지 않음)
-const MIN_BALL_RADIUS = 25; 
+const MIN_BALL_RADIUS = 20; 
 // ⭐ 커서 이미지의 기본 크기
 const BASE_CURSOR_SIZE = 60;
 
