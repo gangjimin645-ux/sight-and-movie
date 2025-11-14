@@ -20,7 +20,7 @@ let currentActiveCursorImage;
 const ORIGINAL_WIDTH = 1920;
 const ORIGINAL_HEIGHT = 1080;
 const ORIGINAL_BALL_RADIUS = 70;
-// ⭐ 공의 최소 크기 (35px 이하로 작아지지 않음)
+// ⭐ 공의 최소 크기 (25px 이하로 작아지지 않음)
 const MIN_BALL_RADIUS = 20; 
 // ⭐ 커서 이미지의 기본 크기
 const BASE_CURSOR_SIZE = 60;
@@ -101,7 +101,7 @@ function recalculateSizes() {
     currentCenterObjectImageHeight = centerObjectImageHeight * sightScaleRatio;
 
     // 2. 'seesunsohot.png'의 최소 너비 (180px로 설정)
-    let minSecondImageWidth = 70;
+    let minSecondImageWidth = 100;
     currentSecondImageWidth = max(secondImageWidth * ratio, minSecondImageWidth);
     // 너비에 맞춰 높이 비율도 동일하게 조정
     let secondScaleRatio = currentSecondImageWidth / secondImageWidth;
