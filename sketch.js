@@ -94,14 +94,14 @@ function recalculateSizes() {
     // --- ⬇️ 글자 이미지를 위한 수정된 부분 (휴대폰 크기 보정) ⬇️ ---
 
     // 1. 'sight.png'의 최소 너비를 300px로 설정 (이 값은 조절 가능)
-    let minSightWidth = 300; 
+    let minSightWidth = 400; 
     currentCenterObjectImageWidth = max(centerObjectImageWidth * ratio, minSightWidth);
     // 너비에 맞춰 높이 비율도 동일하게 조정
     let sightScaleRatio = currentCenterObjectImageWidth / centerObjectImageWidth;
     currentCenterObjectImageHeight = centerObjectImageHeight * sightScaleRatio;
 
     // 2. 'seesunsohot.png'의 최소 너비를 180px로 설정 (이 값은 조절 가능)
-    let minSecondImageWidth = 180;
+    let minSecondImageWidth = 280;
     currentSecondImageWidth = max(secondImageWidth * ratio, minSecondImageWidth);
     // 너비에 맞춰 높이 비율도 동일하게 조정
     let secondScaleRatio = currentSecondImageWidth / secondImageWidth;
