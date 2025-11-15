@@ -34,8 +34,8 @@ let centerObjectImageWidth = 500;
 let centerObjectImageHeight = 300; 
 
 let timeImage; // time.png
-let timeImageWidth = 250; 
-let timeImageHeight = 150; // ⭐ 120 -> 150으로 증가
+let timeImageWidth = 400; // ⭐ 250 -> 400으로 증가
+let timeImageHeight = 150; 
 
 let secondImage; // seesunsohot.png (인스타그램 링크)
 let secondImageWidth = 150; 
@@ -144,9 +144,10 @@ function recalculateSizes() {
     currentCenterObjectImageHeight = centerObjectImageHeight * sightScaleRatio;
 
     // 2. time.png
-    let minTimeWidth = 100; // ⭐ 120 -> 100으로 감소
+    // let minTimeWidth = 100; // ⭐ 최소 너비 제한 제거
     let desiredTimeWidth = timeImageWidth * primaryScale;
-    currentTimeImageWidth = max(desiredTimeWidth, minTimeWidth);
+    // currentTimeImageWidth = max(desiredTimeWidth, minTimeWidth); // ⭐ minTimeWidth 제한 제거
+    currentTimeImageWidth = desiredTimeWidth; // ⭐ desiredTimeWidth만 사용
     let timeScaleRatio = currentTimeImageWidth / timeImageWidth;
     currentTimeImageHeight = timeImageHeight * timeScaleRatio;
 
