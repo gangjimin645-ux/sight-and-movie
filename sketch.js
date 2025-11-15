@@ -34,8 +34,8 @@ let centerObjectImageWidth = 500;
 let centerObjectImageHeight = 500;
 
 let timeImage; // time.png
-let timeImageWidth = 350;
-let timeImageHeight = 120;
+let timeImageWidth = 250;
+let timeImageHeight = 80;
 
 let secondImage; // seesunsohot.png (인스타그램 링크)
 let secondImageWidth = 200;
@@ -54,8 +54,8 @@ let whereImageHeight = 50;
 const GAP_Y = 60; // 이미지 간격 (큰 간격)
 const GAP_Y_SMALL = 60; // 이미지 간격 (작은 간격)
 
-// ⭐ 모니터가 클 때 이미지 크기를 제한하는 상수 (원본의 80%)
-const MAX_SCALE_FACTOR = 0.8;
+// ⭐ 모니터가 클 때 이미지 크기를 제한하는 상수 (원본의 70%)
+const MAX_SCALE_FACTOR = 0.7;
 
 // 반응형 좌표 및 크기 변수
 let currentBallRadius;
