@@ -22,7 +22,7 @@ const ORIGINAL_BALL_RADIUS = 70;
 const MIN_BALL_RADIUS = 20;
 const BASE_CURSOR_SIZE = 60;
 
-const CURSOR_ASPECT_RATIO_W = 0.7;
+const CURSOR_ASPECT_RATIO_W = 1.0;
 const CURSOR_ASPECT_RATIO_H = 1.0;
 
 let currentCursorSize;
@@ -34,16 +34,16 @@ let centerObjectImageWidth = 500;
 let centerObjectImageHeight = 500;
 
 let timeImage; // time.png
-let timeImageWidth = 50;
-let timeImageHeight = 50;
+let timeImageWidth = 350;
+let timeImageHeight = 120;
 
 let secondImage; // seesunsohot.png (인스타그램 링크)
-let secondImageWidth = 100;
-let secondImageHeight = 30;
+let secondImageWidth = 200;
+let secondImageHeight = 50;
 
 let movieImage; // movie.png
-let movieImageWidth = 150;
-let movieImageHeight = 150;
+let movieImageWidth = 500;
+let movieImageHeight = 200;
 let currentMovieImageWidth;
 let currentMovieImageHeight;
 
@@ -52,10 +52,10 @@ let whereImageWidth = 600;
 let whereImageHeight = 50;
 
 const GAP_Y = 80; // 이미지 간격 (큰 간격)
-const GAP_Y_SMALL = 80; // 이미지 간격 (작은 간격)
+const GAP_Y_SMALL = 100; // 이미지 간격 (작은 간격)
 
-// ⭐ 모니터가 클 때 이미지 크기를 제한하는 상수 (원본의 70%)
-const MAX_SCALE_FACTOR = 0.2;
+// ⭐ 모니터가 클 때 이미지 크기를 제한하는 상수 (원본의 80%)
+const MAX_SCALE_FACTOR = 0.8;
 
 // 반응형 좌표 및 크기 변수
 let currentBallRadius;
@@ -125,7 +125,7 @@ function recalculateSizes() {
     
     let primaryScale = min(widthRatio, heightRatio);
 
-    // ⭐ 수정: primaryScale이 MAX_SCALE_FACTOR를 넘지 못하도록 제한
+    // MAX_SCALE_FACTOR를 넘지 못하도록 제한
     primaryScale = min(primaryScale, MAX_SCALE_FACTOR);
     
     currentBallRadius = max(ORIGINAL_BALL_RADIUS * primaryScale, MIN_BALL_RADIUS);
@@ -137,35 +137,35 @@ function recalculateSizes() {
     // --- ⬇️ 이미지 스케일링: primaryScale 적용 및 최소 크기 보장 ⬇️ ---
 
     // 1. sight.png
-    let minSightWidth = 200;
+    let minSightWidth = 150; // 모바일 최적화
     let desiredSightWidth = centerObjectImageWidth * primaryScale;
     currentCenterObjectImageWidth = max(desiredSightWidth, minSightWidth);
     let sightScaleRatio = currentCenterObjectImageWidth / centerObjectImageWidth;
     currentCenterObjectImageHeight = centerObjectImageHeight * sightScaleRatio;
 
     // 2. time.png
-    let minTimeWidth = 150;
+    let minTimeWidth = 120; // 모바일 최적화
     let desiredTimeWidth = timeImageWidth * primaryScale;
     currentTimeImageWidth = max(desiredTimeWidth, minTimeWidth);
     let timeScaleRatio = currentTimeImageWidth / timeImageWidth;
     currentTimeImageHeight = timeImageHeight * timeScaleRatio;
 
     // 3. where.png 스케일링
-    let minWhereWidth = 300;
+    let minWhereWidth = 150; // 모바일 최적화
     let desiredWhereWidth = whereImageWidth * primaryScale;
     currentWhereImageWidth = max(desiredWhereWidth, minWhereWidth);
     let whereScaleRatio = currentWhereImageWidth / whereImageWidth;
     currentWhereImageHeight = whereImageHeight * whereScaleRatio;
 
     // 4. movie.png 스케일링
-    let minMovieWidth = 200;
+    let minMovieWidth = 100; // 모바일 최적화
     let desiredMovieWidth = movieImageWidth * primaryScale;
     currentMovieImageWidth = max(desiredMovieWidth, minMovieWidth);
     let movieScaleRatio = currentMovieImageWidth / movieImageWidth;
     currentMovieImageHeight = movieImageHeight * movieScaleRatio;
 
     // 5. seesunsohot.png (맨 아래)
-    let minSecondImageWidth = 100;
+    let minSecondImageWidth = 80; // 모바일 최적화
     let desiredSecondImageWidth = secondImageWidth * primaryScale;
     currentSecondImageWidth = max(desiredSecondImageWidth, minSecondImageWidth);
     let secondScaleRatio = currentSecondImageWidth / secondImageWidth;
@@ -173,9 +173,9 @@ function recalculateSizes() {
 
 
     // 이미지 사이 갭(GAP) 스케일링
-    // ⭐ 높이가 작을 때 잘림 방지를 위해 최소 간격을 극한으로 줄임 (5, 2)
-    currentGapY = max(GAP_Y * primaryScale, 5);
-    currentGapYSmall = max(GAP_Y_SMALL * primaryScale, 2);
+    // ⭐ 최소 간격의 값을 0으로 설정하여 이미지가 거의 붙게 만듭니다.
+    currentGapY = max(GAP_Y * primaryScale, 0); // 모바일 최적화
+    currentGapYSmall = max(GAP_Y_SMALL * primaryScale, 0); // 모바일 최적화
 
     // --- ⬆️ 이미지 스케일링 완료 ⬆️ ---
 
