@@ -34,16 +34,17 @@ let centerObjectImageWidth = 500;
 let centerObjectImageHeight = 500;
 
 let timeImage; // time.png
-let timeImageWidth = 250;
-let timeImageHeight = 120;
+let timeImageWidth = 250; // 사용자 설정
+let timeImageHeight = 120; 
 
 let secondImage; // seesunsohot.png (인스타그램 링크)
-let secondImageWidth = 150;
+let secondImageWidth = 150; // 사용자 설정
 let secondImageHeight = 50;
 
 let movieImage; // movie.png
-let movieImageWidth = 300;
-let movieImageHeight = 200;
+let movieImageWidth = 300; // 사용자 설정
+// ⭐ 문제의 핵심: 200 -> 100으로 수정하여 세로 늘어짐 해결
+let movieImageHeight = 100; 
 let currentMovieImageWidth;
 let currentMovieImageHeight;
 
@@ -173,7 +174,7 @@ function recalculateSizes() {
 
 
     // 이미지 사이 갭(GAP) 스케일링
-    // ⭐ 최소 간격의 값을 0으로 설정하여 이미지가 거의 붙게 만듭니다.
+    // 최소 간격의 값을 0으로 설정하여 이미지가 거의 붙게 만듭니다.
     currentGapY = max(GAP_Y * primaryScale, 0); // 모바일 최적화
     currentGapYSmall = max(GAP_Y_SMALL * primaryScale, 0); // 모바일 최적화
 
