@@ -61,7 +61,7 @@ let whereImageHeight = 50; 
 // map.png, play.png는 커서로만 사용되므로 크기 변수는 필요 없습니다.
 
 const GAP_Y = 80; // 이미지 간격 (큰 간격)
-const GAP_Y_SMALL = 80; // 이미지 간격 (작은 간격)
+const GAP_Y_SMALL = 100; // 이미지 간격 (작은 간격)
 
 // ⭐ 새로 추가된 상수: 최대 스케일 제한 (원본 크기의 80%로 제한)
 const MAX_SCALE_FACTOR = 0.8; 
