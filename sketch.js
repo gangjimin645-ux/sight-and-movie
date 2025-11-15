@@ -27,7 +27,7 @@ const ORIGINAL_BALL_RADIUS = 70;
 const MIN_BALL_RADIUS = 20; 
 const BASE_CURSOR_SIZE = 60; 
 
-const CURSOR_ASPECT_RATIO_W = 0.7; 
+const CURSOR_ASPECT_RATIO_W = 1.0; 
 const CURSOR_ASPECT_RATIO_H = 1.0;
 
 let currentCursorSize; 
@@ -180,8 +180,9 @@ function recalculateSizes() {
 
 
     // 이미지 사이 갭(GAP) 스케일링
-    currentGapY = max(GAP_Y * primaryScale, 20); 
-    currentGapYSmall = max(GAP_Y_SMALL * primaryScale, 10); 
+    // ⭐⭐ 수정: 높이가 작을 때 잘림 방지를 위해 최소 간격을 극한으로 줄임 (5, 2) ⭐⭐
+    currentGapY = max(GAP_Y * primaryScale, 5); 
+    currentGapYSmall = max(GAP_Y_SMALL * primaryScale, 2); 
 
     // --- ⬆️ 이미지 스케일링 완료 ⬆️ ---
 
@@ -461,7 +462,7 @@ class Ball {
         let dist = sqrt(dx * dx + dy * dy);
 
         if (dist < this.r) {
-            // ⭐ 수정 1: 위치 보정 마진을 2.5에서 1.0으로 줄여 오버슈트를 방지
+            // ⭐ 수정 1: 위치 보정 마진을 2.5에서 1.0으로 줄여 오버슈트를 방지 (떨림 방지)
             let overlap = this.r - dist + 1.0; 
             let angle = atan2(dy, dx) + PI;
 
@@ -477,7 +478,7 @@ class Ball {
             let tangentVelocityX = this.vx - normalVelocity * nx;
             let tangentVelocityY = this.vy - normalVelocity * ny;
 
-            // ⭐ 수정 2: 바닥 충돌 시 반발 계수를 0으로 설정하여 튕김 완전 제거
+            // ⭐ 수정 2: 바닥 충돌 시 반발 계수를 0으로 설정하여 튕김 완전 제거 (떨림 방지)
             let collisionRestitution = restitution;
             // ny < -0.8 은 법선 벡터가 거의 수직으로 위를 향함 (사각형의 윗면 충돌)
             if (ny < -0.8 && normalVelocity < 0) {
