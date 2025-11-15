@@ -44,7 +44,7 @@ let secondImageHeight = 30;
 let movieImage; // movie.png
 let movieImageWidth = 300; // 사용자 설정
 // ⭐ 문제의 핵심: 200 -> 100으로 수정하여 세로 늘어짐 해결
-let movieImageHeight = 50; 
+let movieImageHeight = 100; 
 let currentMovieImageWidth;
 let currentMovieImageHeight;
 
