@@ -22,7 +22,7 @@ const ORIGINAL_BALL_RADIUS = 70;
 const MIN_BALL_RADIUS = 20;
 const BASE_CURSOR_SIZE = 60;
 
-const CURSOR_ASPECT_RATIO_W = 1.0;
+const CURSOR_ASPECT_RATIO_W = 7.0;
 const CURSOR_ASPECT_RATIO_H = 1.0;
 
 let currentCursorSize;
@@ -39,7 +39,7 @@ let timeImageHeight = 120;
 
 let secondImage; // seesunsohot.png (인스타그램 링크)
 let secondImageWidth = 150; // 사용자 설정
-let secondImageHeight = 50;
+let secondImageHeight = 3.0;
 
 let movieImage; // movie.png
 let movieImageWidth = 300; // 사용자 설정
