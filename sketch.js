@@ -43,7 +43,7 @@ let secondImageHeight = 30;
 
 let movieImage; // movie.png
 let movieImageWidth = 300; 
-let movieImageHeight = 100; 
+let movieImageHeight = 200; 
 let currentMovieImageWidth;
 let currentMovieImageHeight;
 
