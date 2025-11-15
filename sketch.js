@@ -34,7 +34,7 @@ let centerObjectImageWidth = 500;
 let centerObjectImageHeight = 500;
 
 let timeImage; // time.png
-let timeImageWidth = 100;
+let timeImageWidth = 80;
 let timeImageHeight = 50;
 
 let secondImage; // seesunsohot.png (인스타그램 링크)
@@ -42,7 +42,7 @@ let secondImageWidth = 100;
 let secondImageHeight = 30;
 
 let movieImage; // movie.png
-let movieImageWidth = 300;
+let movieImageWidth = 250;
 let movieImageHeight = 150;
 let currentMovieImageWidth;
 let currentMovieImageHeight;
@@ -51,8 +51,8 @@ let whereImage; // where.png
 let whereImageWidth = 600;
 let whereImageHeight = 50;
 
-const GAP_Y = 50; // 이미지 간격 (큰 간격)
-const GAP_Y_SMALL = 50; // 이미지 간격 (작은 간격)
+const GAP_Y = 80; // 이미지 간격 (큰 간격)
+const GAP_Y_SMALL = 80; // 이미지 간격 (작은 간격)
 
 // ⭐ 모니터가 클 때 이미지 크기를 제한하는 상수 (원본의 70%)
 const MAX_SCALE_FACTOR = 0.2;
