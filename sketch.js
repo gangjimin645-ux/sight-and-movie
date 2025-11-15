@@ -34,8 +34,8 @@ let centerObjectImageWidth = 500;
 let centerObjectImageHeight = 300; 
 
 let timeImage; // time.png
-let timeImageWidth = 400; // ⭐ 250 -> 400으로 증가
-let timeImageHeight = 150; 
+let timeImageWidth = 400; // ⭐ 최종 400으로 유지
+let timeImageHeight = 150; // 최종 150으로 유지
 
 let secondImage; // seesunsohot.png (인스타그램 링크)
 let secondImageWidth = 150; 
@@ -43,7 +43,7 @@ let secondImageHeight = 30;
 
 let movieImage; // movie.png
 let movieImageWidth = 300; 
-let movieImageHeight = 200; 
+let movieImageHeight = 100; 
 let currentMovieImageWidth;
 let currentMovieImageHeight;
 
@@ -144,12 +144,20 @@ function recalculateSizes() {
     currentCenterObjectImageHeight = centerObjectImageHeight * sightScaleRatio;
 
     // 2. time.png
-    // let minTimeWidth = 100; // ⭐ 최소 너비 제한 제거
     let desiredTimeWidth = timeImageWidth * primaryScale;
-    // currentTimeImageWidth = max(desiredTimeWidth, minTimeWidth); // ⭐ minTimeWidth 제한 제거
-    currentTimeImageWidth = desiredTimeWidth; // ⭐ desiredTimeWidth만 사용
+    currentTimeImageWidth = desiredTimeWidth; 
     let timeScaleRatio = currentTimeImageWidth / timeImageWidth;
-    currentTimeImageHeight = timeImageHeight * timeScaleRatio;
+    
+    // ⭐ 모바일 time.png 높이 강제 압축 로직 시작
+    let HEIGHT_REDUCTION_FACTOR = 1.0; 
+    if (primaryScale < 0.6) {
+        HEIGHT_REDUCTION_FACTOR = 0.75; 
+    } else if (primaryScale < 0.8) {
+        HEIGHT_REDUCTION_FACTOR = 0.85; 
+    }
+    currentTimeImageHeight = (timeImageHeight * timeScaleRatio) * HEIGHT_REDUCTION_FACTOR;
+    // ⭐ 모바일 time.png 높이 강제 압축 로직 끝
+
 
     // 3. where.png 스케일링
     let minWhereWidth = 150; 
