@@ -35,7 +35,7 @@ let centerObjectImageHeight = 500;
 
 let timeImage; // time.png
 let timeImageWidth = 250; // 사용자 설정
-let timeImageHeight = 120; 
+let timeImageHeight = 60; 
 
 let secondImage; // seesunsohot.png (인스타그램 링크)
 let secondImageWidth = 150; // 사용자 설정
@@ -44,7 +44,7 @@ let secondImageHeight = 30;
 let movieImage; // movie.png
 let movieImageWidth = 300; // 사용자 설정
 // ⭐ 문제의 핵심: 200 -> 100으로 수정하여 세로 늘어짐 해결
-let movieImageHeight = 100; 
+let movieImageHeight = 50; 
 let currentMovieImageWidth;
 let currentMovieImageHeight;
 
