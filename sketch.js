@@ -63,6 +63,9 @@ let whereImageHeight = 50; 
 const GAP_Y = 80; // 이미지 간격 (큰 간격)
 const GAP_Y_SMALL = 100; // 이미지 간격 (작은 간격)
 
+// ⭐ 새로 추가된 상수: 최대 스케일 제한 (원본 크기의 80%로 제한)
+const MAX_SCALE_FACTOR = 0.8; 
+
 // 반응형 좌표 및 크기 변수
 let currentBallRadius;
 let currentCenterObjectImageWidth;
@@ -135,6 +138,9 @@ function recalculateSizes() {
     
     let primaryScale = min(widthRatio, heightRatio);
 
+    // ⭐ 수정: primaryScale이 MAX_SCALE_FACTOR를 넘지 못하도록 제한
+    primaryScale = min(primaryScale, MAX_SCALE_FACTOR); 
+    
     currentBallRadius = max(ORIGINAL_BALL_RADIUS * primaryScale, MIN_BALL_RADIUS);
     
     let scaledBaseSize = BASE_CURSOR_SIZE * primaryScale;
@@ -180,7 +186,7 @@ function recalculateSizes() {
 
 
     // 이미지 사이 갭(GAP) 스케일링
-    // ⭐⭐ 수정: 높이가 작을 때 잘림 방지를 위해 최소 간격을 극한으로 줄임 (5, 2) ⭐⭐
+    // ⭐ 높이가 작을 때 잘림 방지를 위해 최소 간격을 극한으로 줄임 (5, 2)
     currentGapY = max(GAP_Y * primaryScale, 5); 
     currentGapYSmall = max(GAP_Y_SMALL * primaryScale, 2); 
 
@@ -462,114 +468,6 @@ class Ball {
         let dist = sqrt(dx * dx + dy * dy);
 
         if (dist < this.r) {
-            // ⭐ 수정 1: 위치 보정 마진을 2.5에서 1.0으로 줄여 오버슈트를 방지 (떨림 방지)
+            // ⭐ 위치 보정 마진을 2.5에서 1.0으로 줄여 오버슈트를 방지 (떨림 방지)
             let overlap = this.r - dist + 1.0; 
-            let angle = atan2(dy, dx) + PI;
-
-            this.x += overlap * cos(angle);
-            this.y += overlap * sin(angle);
-
-            let nx = cos(angle);
-            let ny = sin(angle);
-            let tx = -ny;
-            let ty = nx;
-
-            let normalVelocity = this.vx * nx + this.vy * ny;
-            let tangentVelocityX = this.vx - normalVelocity * nx;
-            let tangentVelocityY = this.vy - normalVelocity * ny;
-
-            // ⭐ 수정 2: 바닥 충돌 시 반발 계수를 0으로 설정하여 튕김 완전 제거 (떨림 방지)
-            let collisionRestitution = restitution;
-            // ny < -0.8 은 법선 벡터가 거의 수직으로 위를 향함 (사각형의 윗면 충돌)
-            if (ny < -0.8 && normalVelocity < 0) {
-                collisionRestitution = 0.0; // 0.0으로 변경
-            }
-             
-            normalVelocity *= -collisionRestitution;
-
-            this.vx = normalVelocity * nx + tangentVelocityX;
-            this.vy = normalVelocity * ny + tangentVelocityY;
-
-            let relativeTangentVelocity = this.vx * tx + this.vy * ty;
-            let frictionFactor = 0.05;
-            let impulse = relativeTangentVelocity * frictionFactor;
-            this.angularVelocity -= impulse / (this.r * this.r) * 0.05;
-
-            this.vx -= impulse * tx;
-            this.vy -= impulse * ty;
-            
-            // 속도가 매우 낮으면 멈춤 처리 (Sleeping 로직)
-            if (ny < -0.8 && abs(this.vy) < 0.15 && abs(this.vx) < 0.15) {
-                this.vy = 0;
-                this.vx = 0;
-                this.angularVelocity = 0;
-            }
-        }
-    }
-
-    collide(other) {
-        let dx = other.x - this.x;
-        let dy = other.y - this.y; 
-        let dist = sqrt(dx * dx + dy * dy);
-        let minDist = this.r + other.r;
-
-        if (dist < minDist) {
-            let overlap = (minDist - dist + 0.05);
-            let angle = atan2(dy, dx);
-
-            let m1 = this.r * this.r;
-            let m2 = other.r * other.r;
-            let totalMass = m1 + m2;
-
-            let thisMoveRatio = m2 / totalMass;
-            let otherMoveRatio = m1 / totalMass;
-
-            this.x -= (overlap * thisMoveRatio) * cos(angle);
-            this.y -= (overlap * thisMoveRatio) * sin(angle);
-            other.x += (overlap * otherMoveRatio) * cos(angle);
-            other.y += (overlap * otherMoveRatio) * sin(angle);
-
-            let nx = cos(angle);
-            let ny = sin(angle);
-            let tx = -ny;
-            let ty = nx;
-
-            let v1n = this.vx * nx + this.vy * ny;
-            let v1t = this.vx * tx + this.vy * ty;
-            let v2n = other.vx * nx + other.vy * ny;
-            let v2t = other.vx * tx + other.vy * ty;
-
-            let v1n_after = (v1n * (m1 - m2) + 2 * m2 * v2n) / (m1 + m2) * restitution;
-            let v2n_after = (v2n * (m2 - m1) + 2 * m1 * v1n) / (m1 + m2) * restitution;
-
-            let frictionFactor = 0.05;
-            let relativeTangentVelocity = v1t - v2t;
-            let impulse = relativeTangentVelocity * frictionFactor;
-
-            this.angularVelocity -= impulse / (this.r * this.r) * 0.05;
-            other.angularVelocity += impulse / (other.r * other.r) * 0.05;
-
-            v1t -= impulse;
-            v2t += impulse;
-
-            this.vx = v1t * tx + v1n_after * nx;
-            this.vy = v1t * ty + v1n_after * ny;
-            other.vx = v2t * tx + v2n_after * nx;
-            other.vy = v2t * ty + v2n_after * ny;
-        }
-    }
-
-    display() {
-        if (this.assignedImage) {
-            push();
-            translate(this.x, this.y);
-            rotate(this.angle);
-            imageMode(CENTER);
-            image(this.assignedImage, 0, 0, this.r * 2, this.r * 2);
-            pop();
-        } else {
-            fill(this.color);
-            ellipse(this.x, this.y, this.r * 2);
-        }
-    }
-}
+            let angle = atan2(dy, dx)
