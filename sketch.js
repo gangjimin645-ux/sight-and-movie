@@ -34,7 +34,7 @@ let centerObjectImageWidth = 500;
 let centerObjectImageHeight = 500;
 
 let timeImage; // time.png
-let timeImageWidth = 80;
+let timeImageWidth = 50;
 let timeImageHeight = 50;
 
 let secondImage; // seesunsohot.png (인스타그램 링크)
@@ -42,7 +42,7 @@ let secondImageWidth = 100;
 let secondImageHeight = 30;
 
 let movieImage; // movie.png
-let movieImageWidth = 250;
+let movieImageWidth = 150;
 let movieImageHeight = 150;
 let currentMovieImageWidth;
 let currentMovieImageHeight;
