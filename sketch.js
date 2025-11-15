@@ -22,7 +22,7 @@ const ORIGINAL_BALL_RADIUS = 70;
 const MIN_BALL_RADIUS = 20;
 const BASE_CURSOR_SIZE = 60;
 
-const CURSOR_ASPECT_RATIO_W = 1.0;
+const CURSOR_ASPECT_RATIO_W = 0.75;
 const CURSOR_ASPECT_RATIO_H = 1.0;
 
 let currentCursorSize;
@@ -35,7 +35,7 @@ let centerObjectImageHeight = 500;
 
 let timeImage; // time.png
 let timeImageWidth = 250; // 사용자 설정
-let timeImageHeight = 180; 
+let timeImageHeight = 200; 
 
 let secondImage; // seesunsohot.png (인스타그램 링크)
 let secondImageWidth = 150; // 사용자 설정
@@ -52,8 +52,8 @@ let whereImage; // where.png
 let whereImageWidth = 600;
 let whereImageHeight = 50;
 
-const GAP_Y = 70; // 이미지 간격 (큰 간격)
-const GAP_Y_SMALL = 70; // 이미지 간격 (작은 간격)
+const GAP_Y = 100; // 이미지 간격 (큰 간격)
+const GAP_Y_SMALL = 90; // 이미지 간격 (작은 간격)
 
 // ⭐ 모니터가 클 때 이미지 크기를 제한하는 상수 (원본의 80%)
 const MAX_SCALE_FACTOR = 0.9;
