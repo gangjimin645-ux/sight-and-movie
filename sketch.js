@@ -7,7 +7,7 @@ const centerObjectImageHeight = 500;
 const centerObjectPositionX = initialCanvasWidth / 2;
 const centerObjectPositionY = initialCanvasHeight / 2;
 const objectImageNames = ["striped_ball.png", "striped_ball2.png", "eyes.png", "eyes.png"];
-const centralContentScaleBase = 600; // 중앙 콘텐츠 크기 기준값 (픽셀)
+const centralContentBaseSize = 600; // 중앙 콘텐츠 크기 기준값 (픽셀)
 
 let centerObjectImage;
 let objectImages = [];
@@ -116,6 +116,7 @@ class MovingObject {
       image(this.assignedImage, 0, 0, this.r * 2, this.r * 2); 
       pop();
     } else {
+      // 이미지 로드 실패 시 대체 도형
       fill(this.color);
       ellipse(this.x, this.y, this.r * 2);
     }
@@ -127,7 +128,7 @@ class MovingObject {
 // =========================================================================
 
 function preload() {
-  // 이미지 로드 (경로 주의: images 폴더 내에 있어야 함)
+  // 이미지 로드 (경로 주의: image/ 폴더 내에 있어야 함)
   try {
     centerObjectImage = loadImage('image/sight.png');
     cursorImage = loadImage('image/cursor.png');
@@ -189,24 +190,31 @@ function recalculateSizes() {
   // 화면의 가로 또는 세로 중 작은 것을 기준으로 삼아, 캔버스가 작아져도 오브젝트가 화면을 벗어나지 않게 함
   mainScaleFactor = min(width / initialCanvasWidth, height / initialCanvasHeight);
 
-  // 2. 중앙 콘텐츠 스케일 비율 결정 (가장 중요)
-  // 데스크톱에서 너무 작아지는 것을 방지하기 위해, 중앙 콘텐츠 크기를 화면의 '작은 쪽' (min(width, height))에 비례하도록 조정합니다.
-  let targetScreenDimension = min(width, height);
+  // *******************************************************************
+  // 2. 중앙 콘텐츠 스케일 비율 결정 (핵심 수정 부분)
+  // *******************************************************************
   
-  // 중앙 콘텐츠가 화면의 약 70%를 차지하도록 목표 크기를 설정
-  let desiredContentSize = targetScreenDimension * 0.7; 
+  // 목표: 데스크톱에서 가로 폭(width)의 70%를 차지하도록 확대
+  let targetWidthBased = width * 0.7; 
+  // 목표: 세로 높이(height)의 80%를 차지하도록 확대 (세로가 짧을 때 대응)
+  let targetHeightBased = height * 0.8; 
+  
+  // 중앙 콘텐츠의 목표 크기는 가로와 세로 중 더 제약이 큰 쪽을 기준으로 삼습니다.
+  let desiredContentSize = min(targetWidthBased, targetHeightBased); 
   
   // 중앙 콘텐츠 크기 비율 계산: 원하는 크기 / 원래 디자인 크기 기준값(600)
-  centerObjectScaleRatio = desiredContentSize / centralContentScaleBase;
+  centerObjectScaleRatio = desiredContentSize / centralContentBaseSize;
   
-  // *선택적: 너무 큰 화면에서 중앙 콘텐츠가 너무 거대해지는 것을 방지하기 위해 최대 배율을 2.0으로 제한
-  centerObjectScaleRatio = min(centerObjectScaleRatio, 2.0); 
+  // 초대형 화면에서 중앙 콘텐츠가 너무 커지는 것을 방지하기 위해 최대 배율을 2.5로 제한
+  centerObjectScaleRatio = min(centerObjectScaleRatio, 2.5); 
+  
+  // *******************************************************************
   
   // 3. 중앙 콘텐츠의 최종 표시 크기 계산
+  // centerObjectImageWidth = 500 (원래 크기)
   centerObjectDisplaySize = centerObjectImageWidth * centerObjectScaleRatio;
   
   // 4. 기타 이미지 크기 계산 (중앙 콘텐츠 스케일 비율에 따라 조정)
-  // cursor.png와 link.png, special.png 크기
   cursorDisplaySize = 40 * centerObjectScaleRatio;
   linkDisplaySize = 30 * centerObjectScaleRatio;
   specialDisplaySize = 30 * centerObjectScaleRatio;
@@ -242,11 +250,12 @@ function draw() {
     text("Sight & Senses (Image Fail)", 0, 0);
   }
   
-  // 3. 커서 이미지 (마우스 위치 대신 중앙에 배치)
+  // 3. 커서 이미지 (중앙에 배치)
   // 캔버스 중앙 (0, 0) 기준 아래쪽에 배치
-  let cursorOffsetY = centerObjectDisplaySize / 2 + cursorDisplaySize / 2; // 중앙 이미지 아래 + 커서 높이 반만큼
+  let cursorOffsetY = centerObjectDisplaySize / 2 + cursorDisplaySize / 2; 
   
   if (cursorImage) {
+      // 80 * centerObjectScaleRatio 만큼 위로 올려서 배치
       image(cursorImage, 0, cursorOffsetY - 80 * centerObjectScaleRatio, cursorDisplaySize, cursorDisplaySize);
   }
   
