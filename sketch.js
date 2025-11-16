@@ -58,9 +58,6 @@ let whereAspectRatio = 1;
 const GAP_Y = 120; // 이미지 간격 (큰 간격)
 const GAP_Y_SMALL = 120; // 이미지 간격 (작은 간격)
 
-// ⭐ 모니터가 클 때 이미지 크기를 제한하는 상수 (원본의 80%)
-const MAX_SCALE_FACTOR = 0.8;
-
 // 반응형 좌표 및 크기 변수
 let currentBallRadius;
 let currentCenterObjectImageWidth;
@@ -80,6 +77,8 @@ let centerObjectY;
 
 
 function preload() {
+    // ⭐⭐ 경로: 'image/' (올바른 경로) ⭐⭐
+    
     // 공 이미지
     stripedBallImage1 = loadImage('image/striped_ball.png');
     stripedBallImage2 = loadImage('image/striped_ball2.png');
@@ -98,10 +97,6 @@ function preload() {
     whereImage = loadImage('image/where.png'); // 지도 링크 영역
     movieImage = loadImage('image/movie.png'); // movie.png 이미지 로드
 
-    if (defaultCursorImage && defaultCursorImage.width && defaultCursorImage.height) {
-        cursorAspectRatio = defaultCursorImage.width / defaultCursorImage.height;
-    }
-
     allBallImages.push(stripedBallImage1);
     allBallImages.push(stripedBallImage2);
     allBallImages.push(eyesBallImage);
@@ -112,13 +107,17 @@ function setup() {
     // preload()에서 로드가 완료된 후, setup()에서 이미지 크기 정보를 읽어옵니다.
     if (defaultCursorImage && defaultCursorImage.width > 0 && defaultCursorImage.height > 0) {
         cursorAspectRatio = defaultCursorImage.width / defaultCursorImage.height;
+    } else {
+        console.warn('cursor.png 로드 실패. 1:1 비율로 대체.');
+        cursorAspectRatio = 1;
     }
+
     if (centerObjectImage && centerObjectImage.width > 0 && centerObjectImage.height > 0) {
         sightAspectRatio = centerObjectImage.width / centerObjectImage.height;
         // 기준 높이를 원본 비율에 맞게 재설정
         centerObjectImageHeight = centerObjectImageWidth / sightAspectRatio;
     } else {
-        console.error("sight.png 로드 실패 또는 크기 0");
+        console.error("sight.png 로드 실패 또는 크기 0. 1:1 비율로 대체.");
         sightAspectRatio = 1; // Failsafe
         centerObjectImageHeight = centerObjectImageWidth;
     }
@@ -128,13 +127,27 @@ function setup() {
      if (whereImage && whereImage.width > 0 && whereImage.height > 0) {
         whereAspectRatio = whereImage.width / whereImage.height;
         whereImageHeight = whereImageWidth / whereAspectRatio;
+    } else {
+        console.warn('where.png 로드 실패. 1:1 비율로 대체.');
+        whereAspectRatio = 600 / 50; // Failsafe
+        whereImageHeight = whereImageWidth / whereAspectRatio;
     }
+
      if (movieImage && movieImage.width > 0 && movieImage.height > 0) {
         movieAspectRatio = movieImage.width / movieImage.height;
         movieImageHeight = movieImageWidth / movieAspectRatio;
+    } else {
+        console.warn('movie.png 로드 실패. 1:1 비율로 대체.');
+        movieAspectRatio = 250 / 100; // Failsafe
+        movieImageHeight = movieImageWidth / movieAspectRatio;
     }
+
      if (secondImage && secondImage.width > 0 && secondImage.height > 0) {
         seesunsohotAspectRatio = secondImage.width / secondImage.height;
+        secondImageHeight = secondImageWidth / seesunsohotAspectRatio;
+    } else {
+        console.warn('seesunsohot.png 로드 실패. 1:1 비율로 대체.');
+        seesunsohotAspectRatio = 200 / 50; // Failsafe
         secondImageHeight = secondImageWidth / seesunsohotAspectRatio;
     }
 
@@ -159,8 +172,8 @@ function recalculateSizes() {
     
     let primaryScale = min(widthRatio, heightRatio);
 
-    // ⭐ 수정: primaryScale이 MAX_SCALE_FACTOR를 넘지 못하도록 제한
-    primaryScale = min(primaryScale, MAX_SCALE_FACTOR);
+    // ⭐⭐ 삭제: 데스크톱에서 작게 보이게 하던 크기 제한 코드 삭제 ⭐⭐
+    // primaryScale = min(primaryScale, MAX_SCALE_FACTOR);
     
     currentBallRadius = max(ORIGINAL_BALL_RADIUS * primaryScale, MIN_BALL_RADIUS);
     
