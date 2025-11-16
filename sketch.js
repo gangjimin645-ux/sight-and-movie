@@ -35,6 +35,13 @@ const centerObjectImageWidth = 500; // 기준 너비
 let centerObjectImageHeight; // 기준 높이 (setup에서 자동 계산됨)
 let sightAspectRatio = 1; // sight.png의 원본 비율 저장
 
+let timeImage; // time.png
+const timeImageWidth = 350;
+let timeImageHeight;
+let timeAspectRatio = 1;
+let currentTimeImageWidth;
+let currentTimeImageHeight;
+
 let secondImage; // seesunsohot.png (인스타그램 링크)
 const secondImageWidth = 200;
 let secondImageHeight;
@@ -52,8 +59,8 @@ const whereImageWidth = 600;
 let whereImageHeight;
 let whereAspectRatio = 1;
 
-const GAP_Y = 80; // 이미지 간격 (큰 간격, sight-where 사이)
-const GAP_Y_SMALL = 80; // 이미지 간격 (작은 간격, where-movie, movie-seesunsohot 사이)
+const GAP_Y = 80; // 이미지 간격 (큰 간격, sight-time 사이)
+const GAP_Y_SMALL = 80; // 이미지 간격 (작은 간격, time-where 등)
 
 // 반응형 좌표 및 크기 변수
 let currentBallRadius;
@@ -87,6 +94,7 @@ function preload() {
 
     // 중앙 객체 이미지
     centerObjectImage = loadImage('image/sight.png');
+    timeImage = loadImage('image/time.png');
     secondImage = loadImage('image/seesunsohot.png'); // 인스타그램
     whereImage = loadImage('image/where.png'); // 지도 링크 영역
     movieImage = loadImage('image/movie.png'); // movie.png 이미지 로드
@@ -108,18 +116,24 @@ function setup() {
         centerObjectImageHeight = centerObjectImageWidth / sightAspectRatio;
     } else {
         console.error("sight.png 로드 실패 또는 크기 0");
+        sightAspectRatio = 1; // Failsafe
+        centerObjectImageHeight = centerObjectImageWidth;
     }
-    if (secondImage && secondImage.width && secondImage.height > 0) {
-        seesunsohotAspectRatio = secondImage.width / secondImage.height;
-        secondImageHeight = secondImageWidth / seesunsohotAspectRatio;
+    if (timeImage && timeImage.width && timeImage.height > 0) {
+        timeAspectRatio = timeImage.width / timeImage.height;
+        timeImageHeight = timeImageWidth / timeAspectRatio;
+    }
+     if (whereImage && whereImage.width && whereImage.height > 0) {
+        whereAspectRatio = whereImage.width / whereImage.height;
+        whereImageHeight = whereImageWidth / whereAspectRatio;
     }
      if (movieImage && movieImage.width && movieImage.height > 0) {
         movieAspectRatio = movieImage.width / movieImage.height;
         movieImageHeight = movieImageWidth / movieAspectRatio;
     }
-     if (whereImage && whereImage.width && whereImage.height > 0) {
-        whereAspectRatio = whereImage.width / whereImage.height;
-        whereImageHeight = whereImageWidth / whereAspectRatio;
+     if (secondImage && secondImage.width && secondImage.height > 0) {
+        seesunsohotAspectRatio = secondImage.width / secondImage.height;
+        secondImageHeight = secondImageWidth / seesunsohotAspectRatio;
     }
 
     createCanvas(windowWidth, windowHeight);
@@ -143,7 +157,8 @@ function recalculateSizes() {
     
     let primaryScale = min(widthRatio, heightRatio);
 
-    // 데스크톱에서 작게 보이던 문제 해결 (MAX_SCALE_FACTOR 제거)
+    // ⭐⭐ 삭제: 데스크톱에서 작게 보이게 하던 코드 삭제 ⭐⭐
+    // primaryScale = min(primaryScale, MAX_SCALE_FACTOR);
     
     currentBallRadius = max(ORIGINAL_BALL_RADIUS * primaryScale, MIN_BALL_RADIUS);
     
@@ -160,7 +175,12 @@ function recalculateSizes() {
     // ⭐ 수정: 원본 비율(sightAspectRatio)을 사용해 높이 계산
     currentCenterObjectImageHeight = currentCenterObjectImageWidth / sightAspectRatio;
 
-    // 2. time.png - (제거됨)
+    // 2. time.png
+    let minTimeWidth = 150;
+    let desiredTimeWidth = timeImageWidth * primaryScale;
+    currentTimeImageWidth = max(desiredTimeWidth, minTimeWidth);
+    // ⭐ 수정: 원본 비율(timeAspectRatio)을 사용해 높이 계산
+    currentTimeImageHeight = currentTimeImageWidth / timeAspectRatio;
 
     // 3. where.png
     let minWhereWidth = 300;
@@ -189,8 +209,9 @@ function recalculateSizes() {
 
     // --- ⬆️ 이미지 스케일링 완료 ⬆️ ---
 
-    // 수직 중앙 정렬 로직 (순서: sight -> where -> movie -> seesunsohot)
+    // 수직 중앙 정렬 로직 (순서: sight -> time -> where -> movie -> seesunsohot)
     let totalContentHeight = currentCenterObjectImageHeight + currentGapY +
+                           currentTimeImageHeight + currentGapY +
                            currentWhereImageHeight + currentGapYSmall +
                            currentMovieImageHeight + currentGapYSmall +
                            currentSecondImageHeight;
@@ -215,17 +236,21 @@ function draw() {
 
     background(0);
     
-    // 이미지 중앙 좌표 계산 (순서: sight -> where -> movie -> seesunsohot)
+    // 이미지 중앙 좌표 계산 (순서: sight -> time -> where -> movie -> seesunsohot)
     
-    // 1. where.png
+    // 1. time.png
+    let timeImageCenterY = centerObjectY + (currentCenterObjectImageHeight / 2) + currentGapY + (currentTimeImageHeight / 2);
+    let timeImageCenterX = centerObjectX;
+    
+    // 2. where.png
     let whereImageCenterX = centerObjectX;
-    let whereImageCenterY = centerObjectY + (currentCenterObjectImageHeight / 2) + currentGapY + (currentWhereImageHeight / 2);
+    let whereImageCenterY = timeImageCenterY + (currentTimeImageHeight / 2) + currentGapY + (currentWhereImageHeight / 2);
 
-    // 2. movie.png
+    // 3. movie.png
     let movieImageCenterX = centerObjectX;
     let movieImageCenterY = whereImageCenterY + (currentWhereImageHeight / 2) + currentGapYSmall + (currentMovieImageHeight / 2);
 
-    // 3. seesunsohot.png
+    // 4. seesunsohot.png
     let secondImageCenterX = centerObjectX;
     let secondImageCenterY = movieImageCenterY + (currentMovieImageHeight / 2) + currentGapYSmall + (currentSecondImageHeight / 2);
 
@@ -263,7 +288,7 @@ function draw() {
         currentActiveCursorImage = defaultCursorImage; // 기본 커서
     }
     
-    // 중앙 객체 그리기 (순서: sight -> where -> movie -> seesunsohot)
+    // 중앙 객체 그리기 (순서: sight -> time -> where -> movie -> seesunsohot)
     if (centerObjectImage) {
         push();
         imageMode(CENTER);
@@ -271,17 +296,22 @@ function draw() {
         // 1. sight.png
         image(centerObjectImage, centerObjectX, centerObjectY, currentCenterObjectImageWidth, currentCenterObjectImageHeight);
         
-        // 2. where.png 그리기 (지도 링크 영역)
+        // 2. time.png
+        if (timeImage) {
+            image(timeImage, timeImageCenterX, timeImageCenterY, currentTimeImageWidth, currentTimeImageHeight);
+        }
+        
+        // 3. where.png 그리기 (지도 링크 영역)
         if (whereImage) {
             image(whereImage, whereImageCenterX, whereImageCenterY, currentWhereImageWidth, currentWhereImageHeight);
         }
 
-        // 3. movie.png 그리기 (유튜브 링크 영역)
+        // 4. movie.png 그리기 (유튜브 링크 영역)
         if (movieImage) {
             image(movieImage, movieImageCenterX, movieImageCenterY, currentMovieImageWidth, currentMovieImageHeight);
         }
 
-        // 4. seesunsohot.png (인스타그램 링크)
+        // 5. seesunsohot.png (인스타그램 링크)
         image(secondImage, secondImageCenterX, secondImageCenterY, currentSecondImageWidth, currentSecondImageHeight);
         
         pop();
@@ -289,7 +319,7 @@ function draw() {
 
     // 물리 시뮬레이션 업데이트
     for (let b of balls) {
-        b.update(whereImageCenterY, movieImageCenterY, secondImageCenterY);
+        b.update(timeImageCenterY, whereImageCenterY, movieImageCenterY, secondImageCenterY);
     }
 
     // 공끼리 충돌 처리 (변경 없음)
@@ -321,9 +351,10 @@ function windowResized() {
 
 function mouseClicked() {
     // 이미지 중앙 좌표 계산 (draw()와 동일)
+    let timeImageCenterY = centerObjectY + (currentCenterObjectImageHeight / 2) + currentGapY + (currentTimeImageHeight / 2);
     
     let whereImageCenterX = centerObjectX;
-    let whereImageCenterY = centerObjectY + (currentCenterObjectImageHeight / 2) + currentGapY + (currentWhereImageHeight / 2);
+    let whereImageCenterY = timeImageCenterY + (currentTimeImageHeight / 2) + currentGapY + (currentWhereImageHeight / 2);
 
     let movieImageCenterX = centerObjectX;
     let movieImageCenterY = whereImageCenterY + (currentWhereImageHeight / 2) + currentGapYSmall + (currentMovieImageHeight / 2);
@@ -389,8 +420,8 @@ class Ball {
         this.color = color(random(150, 255), random(120, 220), random(200, 255), 255);
     }
 
-    // update 함수에 이미지 중앙 Y 좌표를 인수로 전달하여 충돌 처리 (timeY 제거)
-    update(whereY, movieY, secondY) {
+    // update 함수에 이미지 중앙 Y 좌표를 인수로 전달하여 충돌 처리
+    update(timeY, whereY, movieY, secondY) {
         this.vy += gravity;
         this.x += this.vx;
         this.y += this.vy;
@@ -424,7 +455,8 @@ class Ball {
         // 1. sight.png와의 충돌 처리
         this.handleRectCollision(centerObjectX, centerObjectY, currentCenterObjectImageWidth, currentCenterObjectImageHeight);
 
-        // 2. time.png (제거됨)
+        // 2. time.png와의 충돌 처리
+        this.handleRectCollision(centerObjectX, timeY, currentTimeImageWidth, currentTimeImageHeight);
 
         // 3. where.png와의 충돌 처리
         this.handleRectCollision(centerObjectX, whereY, currentWhereImageWidth, currentWhereImageHeight);
