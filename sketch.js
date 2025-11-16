@@ -23,7 +23,7 @@ const MIN_BALL_RADIUS = 20;
 const BASE_CURSOR_SIZE = 60;
 
 const CURSOR_ASPECT_RATIO_W = 0.7;
-const CURSOR_ASPECT_RATIO_H = 0.5;
+const CURSOR_ASPECT_RATIO_H = 0.3;
 
 let currentCursorSize;
 let currentCursorHeight;
